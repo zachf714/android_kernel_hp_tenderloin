@@ -453,7 +453,7 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR * 2] = {
 		.latency = 4000,
 		.residency = 13000,
 	},
-
+#ifdef CONFIG_MSM_STANDALONE_POWER_COLLAPSE
 	[MSM_PM_MODE(0, MSM_PM_SLEEP_MODE_POWER_COLLAPSE_STANDALONE)] = {
 		.supported = 1,
 		.suspend_enabled = 0,
@@ -461,7 +461,7 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR * 2] = {
 		.latency = 500,
 		.residency = 6000,
 	},
-
+#endif
 	[MSM_PM_MODE(0, MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT)] = {
 		.supported = 1,
 		.suspend_enabled = 1,
@@ -477,7 +477,7 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR * 2] = {
 		.latency = 600,
 		.residency = 7200,
 	},
-
+#ifdef CONFIG_MSM_STANDALONE_POWER_COLLAPSE
 	[MSM_PM_MODE(1, MSM_PM_SLEEP_MODE_POWER_COLLAPSE_STANDALONE)] = {
 		.supported = 1,
 		.suspend_enabled = 0,
@@ -485,7 +485,7 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR * 2] = {
 		.latency = 500,
 		.residency = 6000,
 	},
-
+#endif
 	[MSM_PM_MODE(1, MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT)] = {
 		.supported = 1,
 		.suspend_enabled = 1,
@@ -498,18 +498,19 @@ static struct msm_pm_platform_data msm_pm_data[MSM_PM_SLEEP_MODE_NR * 2] = {
 static struct msm_cpuidle_state msm_cstates[] __initdata = {
 	{0, 0, "C0", "WFI",
 		MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT},
-
+#ifdef CONFIG_MSM_STANDALONE_POWER_COLLAPSE
 	{0, 1, "C1", "STANDALONE_POWER_COLLAPSE",
 		MSM_PM_SLEEP_MODE_POWER_COLLAPSE_STANDALONE},
-
+#endif
 	{0, 2, "C2", "POWER_COLLAPSE",
 		MSM_PM_SLEEP_MODE_POWER_COLLAPSE},
 
 	{1, 0, "C0", "WFI",
 		MSM_PM_SLEEP_MODE_WAIT_FOR_INTERRUPT},
-
+#ifdef CONFIG_MSM_STANDALONE_POWER_COLLAPSE
 	{1, 1, "C1", "STANDALONE_POWER_COLLAPSE",
 		MSM_PM_SLEEP_MODE_POWER_COLLAPSE_STANDALONE},
+#endif
 };
 #ifdef CONFIG_USB_PEHCI_HCD
 
