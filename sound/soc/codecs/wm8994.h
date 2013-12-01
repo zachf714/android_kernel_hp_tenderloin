@@ -10,10 +10,13 @@
 #define _WM8994_H
 
 #include <sound/soc.h>
+#include <sound/soc-dapm.h>
 #include <linux/firmware.h>
-#include <linux/completion.h>
 
 #include "wm_hubs.h"
+
+extern struct snd_soc_codec_device soc_codec_dev_wm8994;
+extern struct snd_soc_dai wm8994_dai[];
 
 /* Sources for AIF1/2 SYSCLK - use with set_dai_sysclk() */
 #define WM8994_SYSCLK_MCLK1 1
@@ -32,19 +35,29 @@
 #define WM8994_FLL_SRC_LRCLK  3
 #define WM8994_FLL_SRC_BCLK   4
 
-enum wm8994_vmid_mode {
-	WM8994_VMID_NORMAL,
-	WM8994_VMID_FORCE,
-};
-
 typedef void (*wm8958_micdet_cb)(u16 status, void *data);
 
 int wm8994_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
-		      int micbias);
+		      int micbias, int det, int shrt);
+
 int wm8958_mic_detect(struct snd_soc_codec *codec, struct snd_soc_jack *jack,
 		      wm8958_micdet_cb cb, void *cb_data);
 
-int wm8994_vmid_mode(struct snd_soc_codec *codec, enum wm8994_vmid_mode mode);
+int wm8994_add_controls(struct snd_soc_codec *codec);
+
+int wm8994_hw_params(struct snd_pcm_substream *substream,
+			    struct snd_pcm_hw_params *params,
+			    struct snd_soc_dai *dai);
+
+#define WM8994_CACHE_SIZE 1570
+
+struct wm8994_access_mask {
+	unsigned short readable;   /* Mask of readable bits */
+	unsigned short writable;   /* Mask of writable bits */
+};
+
+//extern const struct wm8994_access_mask wm8994_access_masks[WM8994_CACHE_SIZE];
+extern const u16 wm8994_reg_defaults[WM8994_CACHE_SIZE];
 
 int wm8958_aif_ev(struct snd_soc_dapm_widget *w,
 		  struct snd_kcontrol *kcontrol, int event);
@@ -53,7 +66,8 @@ void wm8958_dsp2_init(struct snd_soc_codec *codec);
 
 struct wm8994_micdet {
 	struct snd_soc_jack *jack;
-	bool detecting;
+	int det;
+	int shrt;
 };
 
 /* codec private data */
@@ -65,24 +79,19 @@ struct wm8994_fll_config {
 
 #define WM8994_NUM_DRC 3
 #define WM8994_NUM_EQ  3
-
-struct wm8994;
+#define WM8994_REG_CACHE_SIZE  0x621
 
 struct wm8994_priv {
 	struct wm_hubs_data hubs;
-	struct wm8994 *wm8994;
-	struct snd_soc_codec *codec;
+	enum snd_soc_control_type control_type;
+	void *control_data;
+	struct snd_soc_codec codec;
+	u16 reg_cache[WM8994_REG_CACHE_SIZE + 1];
 	int sysclk[2];
 	int sysclk_rate[2];
 	int mclk[2];
 	int aifclk[2];
 	struct wm8994_fll_config fll[2], fll_suspend[2];
-	struct completion fll_locked[2];
-	bool fll_locked_irq;
-
-	int vmid_refcount;
-	int active_refcount;
-	enum wm8994_vmid_mode vmid_mode;
 
 	int dac_rates[2];
 	int lrclk_shared[2];
@@ -124,16 +133,13 @@ struct wm8994_priv {
 	const char **enh_eq_texts;
 	struct soc_enum enh_eq_enum;
 
-	struct mutex accdet_lock;
+
 	struct wm8994_micdet micdet[2];
-	bool mic_detecting;
-	bool jack_mic;
-	int btn_mask;
-	bool jackdet;
-	int jackdet_mode;
 
 	wm8958_micdet_cb jack_cb;
 	void *jack_cb_data;
+//	bool jack_is_mic;
+	bool jack_is_video;
 	int micdet_irq;
 
 	int revision;
@@ -150,6 +156,10 @@ struct wm8994_priv {
 	const struct firmware *mbc;
 	const struct firmware *mbc_vss;
 	const struct firmware *enh_eq;
+	
+	struct snd_soc_jack	*soc_jack;
+	bool suspended;
+	bool defer_mic_det; 
 };
 
 #endif
