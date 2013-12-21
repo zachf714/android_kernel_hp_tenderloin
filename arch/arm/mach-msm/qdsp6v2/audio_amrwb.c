@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  */
-#define DEBUG 1
+
 #include "audio_utils_aio.h"
 
 #ifdef CONFIG_DEBUG_FS
