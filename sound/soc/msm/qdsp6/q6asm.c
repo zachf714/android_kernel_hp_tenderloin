@@ -248,7 +248,8 @@ int q6asm_audio_client_buf_free(unsigned int dir,
 						port->buf[cnt].handle);
 				ion_client_destroy(port->buf[cnt].client);
 #else
-				pr_debug("%s:data[%p]phys[%p][%p] cnt[%d] mem_buffer[%p]\n",
+				pr_debug("%s:data[%p]phys[%p][%p] cnt[%d]"
+					 "mem_buffer[%p]\n",
 					__func__, (void *)port->buf[cnt].data,
 					(void *)port->buf[cnt].phys,
 					(void *)&port->buf[cnt].phys, cnt,
@@ -307,7 +308,8 @@ int q6asm_audio_client_buf_free_contiguous(unsigned int dir,
 		ion_unmap_kernel(port->buf[0].client, port->buf[0].handle);
 		ion_free(port->buf[0].client, port->buf[0].handle);
 		ion_client_destroy(port->buf[0].client);
-		pr_debug("%s:data[%p]phys[%p][%p], client[%p] handle[%p]\n",
+		pr_debug("%s:data[%p]phys[%p][%p]"
+			", client[%p] handle[%p]\n",
 			__func__,
 			(void *)port->buf[0].data,
 			(void *)port->buf[0].phys,
@@ -315,7 +317,8 @@ int q6asm_audio_client_buf_free_contiguous(unsigned int dir,
 			(void *)port->buf[0].client,
 			(void *)port->buf[0].handle);
 #else
-		pr_debug("%s:data[%p]phys[%p][%p] mem_buffer[%p]\n",
+		pr_debug("%s:data[%p]phys[%p][%p]"
+			"mem_buffer[%p]\n",
 			__func__,
 			(void *)port->buf[0].data,
 			(void *)port->buf[0].phys,
@@ -522,7 +525,8 @@ int q6asm_audio_client_buf_alloc(unsigned int dir,
 						(UINT_MAX, "audio_client");
 					if (IS_ERR_OR_NULL((void *)
 						buf[cnt].client)) {
-						pr_err("%s: ION create client for AUDIO failed\n",
+						pr_err("%s: ION create client"
+						" for AUDIO failed\n",
 						__func__);
 						goto fail;
 					}
@@ -531,7 +535,8 @@ int q6asm_audio_client_buf_alloc(unsigned int dir,
 						(0x1 << ION_AUDIO_HEAP_ID));
 					if (IS_ERR_OR_NULL((void *)
 						buf[cnt].handle)) {
-						pr_err("%s: ION memory allocation for AUDIO failed\n",
+						pr_err("%s: ION memory"
+					" allocation for AUDIO failed\n",
 							__func__);
 						goto fail;
 					}
@@ -542,7 +547,8 @@ int q6asm_audio_client_buf_alloc(unsigned int dir,
 						&buf[cnt].phys,
 						(size_t *)&len);
 					if (rc) {
-						pr_err("%s: ION Get Physical for AUDIO failed, rc = %d\n",
+						pr_err("%s: ION Get Physical"
+						" for AUDIO failed, rc = %d\n",
 							__func__, rc);
 						goto fail;
 					}
